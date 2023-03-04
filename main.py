@@ -1,26 +1,15 @@
-import openai
+import gpt
 import keys
+import telebot
 
-openai.api_key = keys.api_key
+# a = gpt.Gpt()
+# a.gpt('Куда поехать путешествовать по Росии?')
 
-# задаем модель и промпт
-model_engine = "text-davinci-003"
-#Запрос
-prompt = "Как жарить пельмени?"
+bot = telebot.TeleBot(keys.telegram_key)
 
-# задаем макс кол-во слов
-max_tokens = 128
+@bot.message_handler(content_types=['text'])
+def sender(message):
+    gpt_obj = gpt.Gpt()
+    bot.send_message(message.chat.id, gpt_obj.gpt(message.text))
 
-# генерируем ответ
-completion = openai.Completion.create(
-    engine=model_engine,
-    prompt=prompt,
-    max_tokens=1024,
-    temperature=0.5,
-    top_p=1,
-    frequency_penalty=0,
-    presence_penalty=0
-)
-
-# выводим ответ
-print(completion.choices[0].text) #ответ
+bot.polling(none_stop=True)
